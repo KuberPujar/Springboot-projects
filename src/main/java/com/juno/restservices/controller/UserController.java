@@ -2,10 +2,15 @@ package com.juno.restservices.controller;
 
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,13 +20,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import com.juno.restservices.entities.User;
 import com.juno.restservices.exceptions.UserExistsException;
+import com.juno.restservices.exceptions.UserNameNotFoundException;
 import com.juno.restservices.exceptions.UserNotFoundException;
 import com.juno.restservices.services.UserService;
 
+
 @RestController
+@Validated
 public class UserController {
 
 	@Autowired
@@ -33,7 +40,7 @@ public class UserController {
 	}
 
 	@PostMapping("/users")
-	public ResponseEntity<Void> createUser(@RequestBody User user, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<Void> createUser(@Valid @RequestBody  User user, UriComponentsBuilder uriBuilder) {
 		try {
 			userService.createUser(user);
 			HttpHeaders headers = new HttpHeaders();
@@ -54,7 +61,7 @@ public class UserController {
 	}
 
 	@PutMapping("/users/{id}")
-	public User updateUserById(@PathVariable("id") long id, @RequestBody User user) {
+	public User updateUserById(@PathVariable("id") @Min(1) long id, @RequestBody User user) {
 		try {
 			return userService.updateUserByID(id, user);
 		} catch (UserNotFoundException e) {
@@ -68,7 +75,12 @@ public class UserController {
 	}
 
 	@GetMapping("/users/byusername/{userName}")
-	public User getUserByUserName(@PathVariable("userName") String userName) {
-		return userService.getUserByUserName(userName);
+	public User getUserByUserName(@PathVariable("userName") String userName) throws UserNameNotFoundException {
+		User user= userService.getUserByUserName(userName);
+		if(user==null)
+		{
+			throw new UserNameNotFoundException("Username:"+userName+" not found in user repository");
+		}
+		return user;
 	}
 }
