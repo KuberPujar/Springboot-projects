@@ -11,10 +11,12 @@ import javax.validation.constraints.NotEmpty;
 
 import org.springframework.hateoas.RepresentationModel;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Orders")
+//@JsonFilter(value = "orderFilter")
 public class Order extends RepresentationModel<Order>{
 
 	@Id
