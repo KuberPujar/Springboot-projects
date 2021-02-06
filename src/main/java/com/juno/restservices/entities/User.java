@@ -11,10 +11,21 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import org.springframework.hateoas.RepresentationModel;
+
+/**
+ * 
+    ResourceSupport changed to RepresentationModel
+    Resource changed to EntityModel
+    Resources changed to CollectionModel
+    PagedResources changed to PagedModel
+    ResourceAssembler changed to RepresentationModelAssembler
+**/
+
 //Entity
 @Entity
 @Table(name = "USERS")
-public class User {
+public class User extends RepresentationModel<User>{
 
 	@Id
 	@GeneratedValue
