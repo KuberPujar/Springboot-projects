@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.validation.constraints.Min;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -11,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
@@ -27,11 +30,12 @@ public class UserMappingJacksonController {
 	@Autowired
 	private UserService userService;
 
+	// fields with HashSet
 	@GetMapping("/{id}")
 	public MappingJacksonValue getUserById(@PathVariable("id") long id) {
 		try {
-			Optional<User> optionalUser=userService.getUserByID(id);
-			Set<String> filterFields=new HashSet<String>();
+			Optional<User> optionalUser = userService.getUserByID(id);
+			Set<String> filterFields = new HashSet<String>();
 			filterFields.add("id");
 			filterFields.add("userName");
 			filterFields.add("ssn");
@@ -40,11 +44,29 @@ public class UserMappingJacksonController {
 			 * Set<String> OrderFilterFields=new HashSet<String>();
 			 * filterFields.add("orderDescription");
 			 */
-			FilterProvider filterProvider=new SimpleFilterProvider()
-					.addFilter("userFilter", SimpleBeanPropertyFilter.filterOutAllExcept(filterFields));
-				//	.addFilter("orderFilter", SimpleBeanPropertyFilter.filterOutAllExcept(OrderFilterFields));
-			
-			MappingJacksonValue mapper=new MappingJacksonValue(optionalUser.get());
+			FilterProvider filterProvider = new SimpleFilterProvider().addFilter("userFilter",
+					SimpleBeanPropertyFilter.filterOutAllExcept(filterFields));
+			// .addFilter("orderFilter",
+			// SimpleBeanPropertyFilter.filterOutAllExcept(OrderFilterFields));
+
+			MappingJacksonValue mapper = new MappingJacksonValue(optionalUser.get());
+			mapper.setFilters(filterProvider);
+			return mapper;
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+	}
+
+	// fields with @RequestParam
+	@GetMapping("/params/{id}")
+	public MappingJacksonValue getUserById2(@PathVariable("id") @Min(1) long id, @RequestParam Set<String> fields) {
+		try {
+			Optional<User> optionalUser = userService.getUserByID(id);
+
+			FilterProvider filterProvider = new SimpleFilterProvider().addFilter("userFilter",
+					SimpleBeanPropertyFilter.filterOutAllExcept(fields));
+
+			MappingJacksonValue mapper = new MappingJacksonValue(optionalUser.get());
 			mapper.setFilters(filterProvider);
 			return mapper;
 		} catch (UserNotFoundException e) {
