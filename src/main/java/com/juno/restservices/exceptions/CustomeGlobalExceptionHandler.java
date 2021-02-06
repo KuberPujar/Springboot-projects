@@ -45,4 +45,18 @@ public class CustomeGlobalExceptionHandler extends ResponseEntityExceptionHandle
 		CustomeErrorDetails erroDtls=new CustomeErrorDetails(new Date(), ex.getMessage(),request.getDescription(false));
 		return new ResponseEntity<>(erroDtls,HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(UserNotFoundException.class)
+	public final ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex,WebRequest request)
+	{
+		CustomeErrorDetails customErrorDtls=new CustomeErrorDetails(new Date(), "User Not Found in User Repository", request.getDescription(false));
+		return new ResponseEntity<>(customErrorDtls,HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(OrderNotFoundException.class)
+	public final ResponseEntity<Object> handleOrderNotFoundException(OrderNotFoundException ex,WebRequest request)
+	{
+		CustomeErrorDetails customErrorDtls=new CustomeErrorDetails(new Date(), "Order Not Found in Order Repository", request.getDescription(false));
+		return new ResponseEntity<>(customErrorDtls,HttpStatus.NOT_FOUND);
+	}
 }
