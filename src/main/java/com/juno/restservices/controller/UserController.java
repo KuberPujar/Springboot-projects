@@ -9,6 +9,7 @@ import javax.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,7 +28,11 @@ import com.juno.restservices.exceptions.UserNameNotFoundException;
 import com.juno.restservices.exceptions.UserNotFoundException;
 import com.juno.restservices.services.UserService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
+@Api(tags = "User management RESTFul service",value = "UserController",description = "Controller for usermanagement service")
 @RestController
 @Validated
 @RequestMapping(value = "/users")
@@ -36,13 +41,15 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@GetMapping
+	@ApiOperation(value = "Retrieve list of users")
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<User> getAllUsers() {
 		return userService.getAllUsers();
 	}
 
+	@ApiOperation(value = "Creates a new user")
 	@PostMapping
-	public ResponseEntity<Void> createUser(@Valid @RequestBody  User user, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<Void> createUser(@ApiParam("User informatiopn for new user o be created") @Valid @RequestBody  User user, UriComponentsBuilder uriBuilder) {
 		try {
 			userService.createUser(user);
 			HttpHeaders headers = new HttpHeaders();

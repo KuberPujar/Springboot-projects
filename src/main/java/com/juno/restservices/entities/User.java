@@ -18,6 +18,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 
     ResourceSupport changed to RepresentationModel
@@ -26,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonView;
     PagedResources changed to PagedModel
     ResourceAssembler changed to RepresentationModelAssembler
 **/
-
+@ApiModel("This Model is used to create User.")
 //Entity
 @Entity
 @Table(name = "USERS")
@@ -35,11 +38,13 @@ import com.fasterxml.jackson.annotation.JsonView;
 //@JsonFilter(value = "userFilter") //used for dynamic filter via params
 public class User extends RepresentationModel<User>{
 
+	@ApiModelProperty(notes = "Auto generated unique id",required = true,position = 1)
 	@Id
 	@GeneratedValue
 	@JsonView(Views.External.class)
 	private long id;
 
+	@ApiModelProperty(notes = "UserName should be flname.",example = "kpujar" ,required  = false,position = 2)
 	@NotEmpty(message = "userName field is mandatory field. Please enter the userName.")
 	@Column(name = "USER_NAME", length = 50, nullable = false, unique = true)
 	@JsonView(Views.External.class)
