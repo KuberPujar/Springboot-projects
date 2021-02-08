@@ -30,6 +30,11 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-hateoas</artifactId>
 		</dependency>
 
@@ -135,10 +140,21 @@
 						<arg>-Amapstruct.suppressGeneratorTimestamp=true</arg>
 						<arg>-Amapstruct.defaultComponentModel=spring</arg>
 					</compilerArgs>
-
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.4.0</version>
+				<executions>
+					<execution>
+						<id>build-info</id>
+						<goals>
+							<goal>build-info</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
